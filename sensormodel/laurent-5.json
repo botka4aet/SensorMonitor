@@ -1,0 +1,10 @@
+{
+	"laurent-5": {
+		"name": "laurent-5",
+		"login": "admin",
+		"password": "Laurent",
+		"relaylimit": 4,
+		"infolink": "/json_sensor.cgi?psw=_password_",
+		"product_info": "https://kernelchip.ru/Laurent-5.php"
+	}
+}

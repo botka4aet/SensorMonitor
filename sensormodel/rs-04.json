@@ -3,7 +3,25 @@
 		"name": "rs-04",
 		"login": "admin",
 		"password": "admin",
-		"relaylimit": 4,
-		"infolink": "/benuks.htm?lg=_login_&ps=_password_"
-	}
+		"relaylimit": 6,
+		"infolink": "/benuks.htm?lg=_login_&ps=_password_",
+		"product_info": "https://radioseti.ru/ethernet_rs485/ethernet_relay_rs04"
+	},
+	"rs-38": {
+		"name": "rs-38",
+		"login": "admin",
+		"password": "admin",
+		"relaylimit": 1,
+		"infolink": "/benuks.htm?lg=_login_&ps=_password_",
+		"product_info": "https://radioseti.ru/ethernet_rs485/ethernet_relay_rs044"
+	},
+	"rs-044": {
+		"name": "rs-044",
+		"login": "admin",
+		"password": "admin",
+		"relaylimit": 2,
+		"infolink": "/benuks.htm?lg=_login_&ps=_password_",
+		"product_info": "https://radioseti.ru/ethernet_rs485/ethernet_relay_rs044"
+	}	
 }
+

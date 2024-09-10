@@ -37,10 +37,8 @@ type sensorconfig struct {
 	Err         int
 }
 
-var baseAddress = "http://192.168."
-
 func (s *sensorconfig) update() {
-	linfo := baseAddress + s.Address + s.Infolink
+	linfo := s.Address + s.Infolink
 	linfo = strings.ReplaceAll(linfo, "_login_", s.Login)
 	linfo = strings.ReplaceAll(linfo, "_password_", s.Password)
 	req, err := http.NewRequest(http.MethodGet, linfo, nil)

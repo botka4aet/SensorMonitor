@@ -1,0 +1,9 @@
+{
+	"rs-04": {
+		"name": "rs-04",
+		"login": "admin",
+		"password": "admin",
+		"relaylimit": 4,
+		"infolink": "/benuks.htm?lg=_login_&ps=_password_"
+	}
+}

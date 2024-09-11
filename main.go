@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -22,6 +21,12 @@ type defaultmodel struct {
 	Infolink   string
 }
 
+type tempmodel struct {
+	Name  string
+	Mac   string
+	Value float32
+}
+
 var defaultmodele defaultmodel
 
 type sensorconfig struct {
@@ -31,7 +36,7 @@ type sensorconfig struct {
 	Password    string
 	Relaylimit  int
 	Relay       [10]bool
-	Temperature int
+	Temperature []tempmodel
 	Infolink    string
 	IgnoreEmpty bool
 	Err         int
@@ -63,45 +68,8 @@ func (s *sensorconfig) update() {
 		log.Printf("client: could not read response body: %s\n", err)
 		s.Err++
 	}
-	wordsi := strings.Split(string(resBody[:]), ";")
 
-	for i, wordi := range wordsi {
-		wordsii := strings.Split(wordi, ":")
-		//skip, if not parameter : value
-		if len(wordsii) != 2 {
-			continue
-		}
-		wordii := wordsii[0]
-		if len([]rune(wordii)) > 3 {
-			wordii = string(wordii)[0:4]
-		}
-		switch wordii {
-		case "gpio":
-			tstring := strings.TrimPrefix(wordsii[0], "gpio")
-			tint, err := strconv.Atoi(tstring)
-			if err != nil {
-				continue
-			}
-			switch wordsii[1] {
-			case "ON":
-				s.Relay[tint-1] = true
-			case "OFF":
-				s.Relay[tint-1] = false
-			default:
-				continue
-			}
-
-		case "dws":
-			tint, _ := strconv.Atoi(strings.ReplaceAll(wordsii[1], ".", ""))
-			if err != nil || tint == 999 {
-				continue
-			}
-			s.Temperature = tint
-		default:
-			continue
-		}
-		fmt.Printf("Word %d is: %s\n", i, wordi)
-	}
+	getinfofromres(string(resBody[:]), s)
 }
 
 func main() {

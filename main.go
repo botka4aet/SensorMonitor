@@ -68,8 +68,11 @@ func (s *sensorconfig) update() {
 		log.Printf("client: could not read response body: %s\n", err)
 		s.Err++
 	}
+	if s.Err > 0 {
+		return
+	}
 
-	getinfofromres(string(resBody[:]), s)
+	getinfofromres(resBody[:], s)
 }
 
 func main() {
@@ -157,5 +160,9 @@ func main() {
 	for key, sensor := range sensorconfigs {
 		sensor.update()
 		sensorconfigs[key] = sensor
+	}
+
+	for i, config := range defaultmodels {
+		fmt.Printf("[%v]: %v\n", i, config)
 	}
 }

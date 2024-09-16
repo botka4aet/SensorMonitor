@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/gelsrc/go-charset"
+	"github.com/goccy/go-json"
 	"strconv"
 	"strings"
 )
 
-func getinfors04(resBody string, s *sensorconfig) {
+func getinfors04(resBody []byte, s *sensorconfig) {
 	wordsi := strings.Split(string(resBody[:]), ";")
 
 	for i, wordi := range wordsi {
@@ -40,7 +42,7 @@ func getinfors04(resBody string, s *sensorconfig) {
 			if err != nil || tint == 999 {
 				continue
 			}
-			s.Temperature = []tempmodel{tempmodel{Value: float32(tint) / 10}}
+			s.Temperature = []tempmodel{{Value: float32(tint) / 10}}
 		default:
 			continue
 		}
@@ -48,15 +50,33 @@ func getinfors04(resBody string, s *sensorconfig) {
 	}
 }
 
-func getinfofromres(resBody string, s *sensorconfig) {
+type stlaurent struct {
+	Owi_temp [][]string `json:"owi_temp"`
+}
+
+func getinfolau5(resBody []byte, s *sensorconfig) {
+	res := stlaurent{}
+	json.Unmarshal(resBody, &res)
+	for _, wordi := range res.Owi_temp {
+		if len(wordi) != 4 || wordi[3] == "" {
+			continue
+		}
+		tname := string(charset.Cp1251BytesToRunes([]byte(wordi[2])))
+		tvalue, err := strconv.ParseFloat(wordi[3], 32)
+		if err != nil {
+			continue
+		}
+		tmodel := tempmodel{Name: tname, Mac: wordi[1], Value: float32(tvalue)}
+		s.Temperature = append(s.Temperature, tmodel)
+	}
+}
+
+func getinfofromres(resBody []byte, s *sensorconfig) {
 	switch s.Model {
-	case "rs-04":
-		getinfors04(resBody, s)
-	case "rs-38":
-		getinfors04(resBody, s)
-	case "rs-044":
+	case "rs-04", "rs-38", "rs-044":
 		getinfors04(resBody, s)
 	case "laurent-5":
+		getinfolau5(resBody, s)
 	default:
 		return
 	}

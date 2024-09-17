@@ -27,6 +27,11 @@ type tempmodel struct {
 	Value float32
 }
 
+type relaymodel struct {
+	Number int
+	Status bool
+}
+
 var defaultmodele defaultmodel
 
 type sensorconfig struct {
@@ -35,7 +40,7 @@ type sensorconfig struct {
 	Login       string
 	Password    string
 	Relaylimit  int
-	Relay       [10]bool
+	Relay       []relaymodel
 	Temperature []tempmodel
 	Infolink    string
 	IgnoreEmpty bool

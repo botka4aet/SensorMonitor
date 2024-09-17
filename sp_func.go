@@ -28,14 +28,14 @@ func getinfors04(resBody []byte, s *sensorconfig) {
 			if err != nil {
 				continue
 			}
+			rmodel := relaymodel{Number: tint}
 			switch wordsii[1] {
 			case "ON":
-				s.Relay[tint-1] = true
-			case "OFF":
-				s.Relay[tint-1] = false
+				rmodel.Status = true
 			default:
 				continue
 			}
+			s.Relay = append(s.Relay, rmodel)
 
 		case "dws":
 			tint, err := strconv.Atoi(strings.ReplaceAll(wordsii[1], ".", ""))
@@ -51,23 +51,34 @@ func getinfors04(resBody []byte, s *sensorconfig) {
 }
 
 type stlaurent struct {
+	Relay     string     `json:"rele"`
 	Owi_temp [][]string `json:"owi_temp"`
 }
 
 func getinfolau5(resBody []byte, s *sensorconfig) {
 	res := stlaurent{}
 	json.Unmarshal(resBody, &res)
-	for _, wordi := range res.Owi_temp {
-		if len(wordi) != 4 || wordi[3] == "" {
+	for _, temp_info := range res.Owi_temp {
+		if len(temp_info) != 4 || temp_info[3] == "" {
 			continue
 		}
-		tname := string(charset.Cp1251BytesToRunes([]byte(wordi[2])))
-		tvalue, err := strconv.ParseFloat(wordi[3], 32)
+		tname := string(charset.Cp1251BytesToRunes([]byte(temp_info[2])))
+		tvalue, err := strconv.ParseFloat(temp_info[3], 32)
 		if err != nil {
 			continue
 		}
-		tmodel := tempmodel{Name: tname, Mac: wordi[1], Value: float32(tvalue)}
+		tmodel := tempmodel{Name: tname, Mac: temp_info[1], Value: float32(tvalue)}
 		s.Temperature = append(s.Temperature, tmodel)
+	}
+	for i, r := range res.Relay {
+		if i >= s.Relaylimit {
+			break
+		}
+		rmodel := relaymodel{Number: i}
+		if r != 48 {
+			rmodel.Status = true
+		}
+		s.Relay = append(s.Relay, rmodel)
 	}
 }
 
